@@ -8,7 +8,7 @@ public class Procssor extends Thread {
 
     private String Pname;
     public  MyBuffer buff;
-    HashMap<String,Integer> wordsCounts ;
+    HashMap<String,Integer> wordsCounts = new HashMap<String,Integer>();
 
 
     public Procssor(String pname, MyBuffer buff) {

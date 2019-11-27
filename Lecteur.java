@@ -36,10 +36,11 @@ public class Lecteur extends Thread{
             while ((n=bufferedInputStream.read(buf))>=0){
                 for (int i=0;i<n;i++) {
                      System.out.print((char) buf[i]);
-                     if (){
-                         new Procssor()
+                     if (n<this.buffer.data.size()){
+                         //new Procssor()
+                     }else {
+                         this.buffer.addWord(String.valueOf(((char) buf[i])));
                      }
-                     this.buffer.addWord(((char) buf[i]));
                  }
             }
             bufferedInputStream.close();
