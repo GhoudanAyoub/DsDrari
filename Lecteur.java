@@ -1,12 +1,14 @@
-package com.company;
-
+package ds;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Lecteur extends Thread{
 
-   private String fileName;
+    private String fileName;
     private String threadName;
     private  MyBuffer buffer;
+    public static boolean suspended = false;
 
     public Lecteur(String fileName, String threadName, MyBuffer buffer) {
         this.fileName = fileName;
@@ -14,39 +16,37 @@ public class Lecteur extends Thread{
         this.buffer = buffer;
     }
 
-    public String readWord() throws IOException {
-        File f = new File(this.fileName);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
-        String line;
-        while ((line = reader.readLine())!=null){
-                String[] Wordlist = line.split("[ ;.,!?\"]");
-                while (!line.equals(Wordlist)){
-                    System.out.println(line);
-                }
+    private String[] readWord() throws IOException {
+        String donnees = new String(Files.readAllBytes(Paths.get(fileName)));
+        String [] mots = donnees.split("\\s");
+        for (String m : mots) {
+           // System.out.println("====>" + m);
         }
-        return line;
+        return mots;
     }
-    public void run(){
-        File f = new File(this.fileName);
-        BufferedInputStream bufferedInputStream = null;
+    public synchronized   void run(){
+        System.out.println("---------->Lecteur IN");
         try {
-            bufferedInputStream = new BufferedInputStream(new FileInputStream(f));
-            byte[] buf=  new  byte[10];
-            int n = 0;
-            while ((n=bufferedInputStream.read(buf))>=0){
-                for (int i=0;i<n;i++) {
-                     System.out.print((char) buf[i]);
-                     if (n<this.buffer.data.size()){
-                         //new Procssor()
-                     }else {
-                         this.buffer.addWord(String.valueOf(((char) buf[i])));
-                     }
-                 }
-            }
-            bufferedInputStream.close();
+            System.out.println("---------->Lecteur Working");
+            int n;
+                n = readWord().length;
+                String[] mm = readWord();
+                for (int j = 0;j<n;j++) {
+                    if (n >= this.buffer.getSize()) {
+                        System.out.print("-->{Lecteur Waiting} ... Process working To empty Place \n");
+                        synchronized (this){
+                            while (suspended) wait();
+                        }
+                    }
+                    this.buffer.addWord(mm[j]);
+                }
         }catch (Exception e){
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
+        System.out.println("---------->Lecteur out");
+    }
+    public static void go(){
+        suspended = true;
     }
 
 }
