@@ -21,17 +21,15 @@ public class Procssor extends Thread {
     public void run(){
         System.out.println("---------->Procssor IN");
                 System.out.println("---------->Procssor Working");
-                while (this.buff.data.size()!=0) {
-
-                    try {
-                        Processe();
-                        sleep(1000);
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println("---------->Procssor Waiting ...");
-                }
+        do {
+            Processe();
+            try {
+                sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("---------->Procssor Waiting ...");
+        } while (this.buff.data.size() != 0);
         getWordsCounts();
         Lecteur.go();
         System.out.println("---------->Procssor OUT");
